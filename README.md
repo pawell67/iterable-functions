@@ -45,17 +45,17 @@ therefore introduces no new concepts.
 
 | `array_*` | `iterator_*` | Kind | Callback receives |
 |---|---|---|---|
-| `array_map` | `iterator_map(iterable $iterable, callable $callback): Iterator` | lazy | `$value` |
-| `array_filter` | `iterator_filter(iterable $iterable, ?callable $callback = null, int $mode = ARRAY_FILTER_USE_VALUE): Iterator` | lazy | depends on `$mode`, as in `array_filter()` |
-| `array_slice` | `iterator_slice(iterable $iterable, int $offset, ?int $length = null): Iterator` | lazy | — |
-| `array_keys` | `iterator_keys(iterable $iterable): Iterator` | lazy | — |
-| `array_values` | `iterator_values(iterable $iterable): Iterator` | lazy | — |
-| `array_reduce` | `iterator_reduce(iterable $iterable, callable $callback, mixed $initial = null): mixed` | terminal | `$carry, $value` |
-| `array_any` | `iterator_any(iterable $iterable, callable $callback): bool` | terminal, short-circuits | `$value, $key` |
-| `array_all` | `iterator_all(iterable $iterable, callable $callback): bool` | terminal, short-circuits | `$value, $key` |
-| `array_find` | `iterator_find(iterable $iterable, callable $callback): mixed` | terminal, short-circuits | `$value, $key` |
-| `array_find_key` | `iterator_find_key(iterable $iterable, callable $callback): mixed` | terminal, short-circuits | `$value, $key` |
-| `array_first` | `iterator_first(iterable $iterable): mixed` | terminal, pulls at most one entry | — |
+| `array_map` | `iterator_map(iterable $iterator, callable $callback): Iterator` | lazy | `$value` |
+| `array_filter` | `iterator_filter(iterable $iterator, ?callable $callback = null, int $mode = ARRAY_FILTER_USE_VALUE): Iterator` | lazy | depends on `$mode`, as in `array_filter()` |
+| `array_slice` | `iterator_slice(iterable $iterator, int $offset, ?int $length = null): Iterator` | lazy | — |
+| `array_keys` | `iterator_keys(iterable $iterator): Iterator` | lazy | — |
+| `array_values` | `iterator_values(iterable $iterator): Iterator` | lazy | — |
+| `array_reduce` | `iterator_reduce(iterable $iterator, callable $callback, mixed $initial = null): mixed` | terminal | `$carry, $value` |
+| `array_any` | `iterator_any(iterable $iterator, callable $callback): bool` | terminal, short-circuits | `$value, $key` |
+| `array_all` | `iterator_all(iterable $iterator, callable $callback): bool` | terminal, short-circuits | `$value, $key` |
+| `array_find` | `iterator_find(iterable $iterator, callable $callback): mixed` | terminal, short-circuits | `$value, $key` |
+| `array_find_key` | `iterator_find_key(iterable $iterator, callable $callback): mixed` | terminal, short-circuits | `$value, $key` |
+| `array_first` | `iterator_first(iterable $iterator): mixed` | terminal, pulls at most one entry | — |
 
 Lazy functions return a non-rewindable `Iterator` and never pull more entries
 from the input than needed.
@@ -155,6 +155,22 @@ with only the `require` line removed. The bundled runner supports the
 ```bash
 php tools/run-tests.php   # or: composer test
 ```
+
+## Benchmarks
+
+`bench/` compares `iterator_to_array()` + `array_*` with `iterator_*` on a
+large NDJSON file (also read from STDIN), under a low `memory_limit`, and on a
+simulated paginated API where early exit saves requests. Each case runs in a
+fresh process. Requires PHP 8.4+.
+
+```bash
+php bench/run.php --rows=1000000                      # generates bench/data/ once
+php bench/run.php --php=php8.5 --php=/path/to/php-src/sapi/cli/php   # compare builds
+```
+
+The data is synthetic and generated from a fixed seed, so results can be
+reproduced on any machine. Use release (non-debug) builds when comparing
+timings.
 
 ## License
 

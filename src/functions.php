@@ -33,10 +33,10 @@ if (!\function_exists('iterator_map')) {
      * Lazy counterpart of array_map() with a single input: applies $callback
      * to every value, preserving keys.
      */
-    function iterator_map(iterable $iterable, callable $callback): \Iterator
+    function iterator_map(iterable $iterator, callable $callback): \Iterator
     {
-        return (static function () use ($iterable, $callback): \Generator {
-            foreach ($iterable as $key => $value) {
+        return (static function () use ($iterator, $callback): \Generator {
+            foreach ($iterator as $key => $value) {
                 yield $key => $callback($value);
             }
         })();
@@ -53,14 +53,14 @@ if (!\function_exists('iterator_filter')) {
      *
      * @throws \ValueError when $mode is not one of the constants above
      */
-    function iterator_filter(iterable $iterable, ?callable $callback = null, int $mode = ARRAY_FILTER_USE_VALUE): \Iterator
+    function iterator_filter(iterable $iterator, ?callable $callback = null, int $mode = ARRAY_FILTER_USE_VALUE): \Iterator
     {
         if ($mode !== ARRAY_FILTER_USE_VALUE && $mode !== ARRAY_FILTER_USE_KEY && $mode !== ARRAY_FILTER_USE_BOTH) {
             throw new \ValueError('iterator_filter(): Argument #3 ($mode) must be one of ARRAY_FILTER_USE_VALUE, ARRAY_FILTER_USE_KEY, or ARRAY_FILTER_USE_BOTH');
         }
 
-        return (static function () use ($iterable, $callback, $mode): \Generator {
-            foreach ($iterable as $key => $value) {
+        return (static function () use ($iterator, $callback, $mode): \Generator {
+            foreach ($iterator as $key => $value) {
                 if ($callback === null) {
                     $keep = $value;
                 } elseif ($mode === ARRAY_FILTER_USE_KEY) {
@@ -91,7 +91,7 @@ if (!\function_exists('iterator_slice')) {
      *
      * @throws \ValueError when $offset or $length is negative
      */
-    function iterator_slice(iterable $iterable, int $offset, ?int $length = null): \Iterator
+    function iterator_slice(iterable $iterator, int $offset, ?int $length = null): \Iterator
     {
         if ($offset < 0) {
             throw new \ValueError('iterator_slice(): Argument #2 ($offset) must be greater than or equal to 0');
@@ -100,13 +100,13 @@ if (!\function_exists('iterator_slice')) {
             throw new \ValueError('iterator_slice(): Argument #3 ($length) must be greater than or equal to 0');
         }
 
-        return (static function () use ($iterable, $offset, $length): \Generator {
+        return (static function () use ($iterator, $offset, $length): \Generator {
             if ($length === 0) {
                 return;
             }
             $skipped = 0;
             $taken = 0;
-            foreach ($iterable as $key => $value) {
+            foreach ($iterator as $key => $value) {
                 if ($skipped < $offset) {
                     ++$skipped;
                     continue;
@@ -125,10 +125,10 @@ if (!\function_exists('iterator_keys')) {
      * Lazy counterpart of array_keys() (without its filtering parameters):
      * yields the keys of the iterable as a list.
      */
-    function iterator_keys(iterable $iterable): \Iterator
+    function iterator_keys(iterable $iterator): \Iterator
     {
-        return (static function () use ($iterable): \Generator {
-            foreach ($iterable as $key => $_) {
+        return (static function () use ($iterator): \Generator {
+            foreach ($iterator as $key => $_) {
                 yield $key;
             }
         })();
@@ -140,10 +140,10 @@ if (!\function_exists('iterator_values')) {
      * Lazy counterpart of array_values(): yields the values of the iterable
      * as a list.
      */
-    function iterator_values(iterable $iterable): \Iterator
+    function iterator_values(iterable $iterator): \Iterator
     {
-        return (static function () use ($iterable): \Generator {
-            foreach ($iterable as $value) {
+        return (static function () use ($iterator): \Generator {
+            foreach ($iterator as $value) {
                 yield $value;
             }
         })();
@@ -155,10 +155,10 @@ if (!\function_exists('iterator_reduce')) {
      * Counterpart of array_reduce(): $carry = $callback($carry, $value) for
      * every value, starting from $initial.
      */
-    function iterator_reduce(iterable $iterable, callable $callback, mixed $initial = null): mixed
+    function iterator_reduce(iterable $iterator, callable $callback, mixed $initial = null): mixed
     {
         $carry = $initial;
-        foreach ($iterable as $value) {
+        foreach ($iterator as $value) {
             $carry = $callback($carry, $value);
         }
 
@@ -171,9 +171,9 @@ if (!\function_exists('iterator_any')) {
      * Counterpart of array_any(): returns true if $callback($value, $key)
      * returns a truthy value for at least one entry. Stops at the first match.
      */
-    function iterator_any(iterable $iterable, callable $callback): bool
+    function iterator_any(iterable $iterator, callable $callback): bool
     {
-        foreach ($iterable as $key => $value) {
+        foreach ($iterator as $key => $value) {
             if ($callback($value, $key)) {
                 return true;
             }
@@ -189,9 +189,9 @@ if (!\function_exists('iterator_all')) {
      * returns a truthy value for every entry. Stops at the first failure.
      * Returns true for an empty iterable.
      */
-    function iterator_all(iterable $iterable, callable $callback): bool
+    function iterator_all(iterable $iterator, callable $callback): bool
     {
-        foreach ($iterable as $key => $value) {
+        foreach ($iterator as $key => $value) {
             if (!$callback($value, $key)) {
                 return false;
             }
@@ -207,9 +207,9 @@ if (!\function_exists('iterator_find')) {
      * which $callback($value, $key) returns a truthy value, or null.
      * Stops at the first match.
      */
-    function iterator_find(iterable $iterable, callable $callback): mixed
+    function iterator_find(iterable $iterator, callable $callback): mixed
     {
-        foreach ($iterable as $key => $value) {
+        foreach ($iterator as $key => $value) {
             if ($callback($value, $key)) {
                 return $value;
             }
@@ -228,9 +228,9 @@ if (!\function_exists('iterator_find_key')) {
      * Note: unlike array keys, iterator keys may themselves be null, so a null
      * result is ambiguous for such iterators.
      */
-    function iterator_find_key(iterable $iterable, callable $callback): mixed
+    function iterator_find_key(iterable $iterator, callable $callback): mixed
     {
-        foreach ($iterable as $key => $value) {
+        foreach ($iterator as $key => $value) {
             if ($callback($value, $key)) {
                 return $key;
             }
@@ -245,9 +245,9 @@ if (!\function_exists('iterator_first')) {
      * Counterpart of array_first(): returns the first value of the iterable,
      * or null when it is empty. Pulls at most one entry from the input.
      */
-    function iterator_first(iterable $iterable): mixed
+    function iterator_first(iterable $iterator): mixed
     {
-        foreach ($iterable as $value) {
+        foreach ($iterator as $value) {
             return $value;
         }
 
