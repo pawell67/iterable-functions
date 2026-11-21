@@ -116,9 +116,9 @@ applies to `iterator_find_key()`.
 ## Future scope
 
 These are out of scope for the proposal and may be considered separately:
-`chunk`, `zip`, `chain`, `take_while`/`skip_while`, `contains`, `none`, the
-`$filter_value`/`$strict` parameters of `array_keys()`, and key-aware variants
-of `iterator_map()`. `iterator_last()` is excluded on purpose: it would have
+`chunk`, `zip`, `chain`, `flat_map`, `take_while`/`skip_while`, `contains`,
+`none`, the `$filter_value`/`$strict` parameters of `array_keys()`, and
+key-aware variants of `iterator_map()`. `iterator_last()` is excluded on purpose: it would have
 to consume the whole input and never terminates on infinite sources.
 
 ## Example
