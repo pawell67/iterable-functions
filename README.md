@@ -172,6 +172,19 @@ The data is synthetic and generated from a fixed seed, so results can be
 reproduced on any machine. Use release (non-debug) builds when comparing
 timings.
 
+`bench/overhead.php` measures the overhead of the functions themselves:
+every case reads 10 million integers from a generator (`--n` to change), and
+the table shows the median of several fresh-process runs. On a PHP binary with
+native `iterator_*` functions, the polyfill is measured on the same binary
+under renamed functions, so differences between builds do not skew the
+comparison. The `array_*` variant needs about 1 GB of memory with the default
+`--n`.
+
+```bash
+php bench/overhead.php                                # --n=10000000 --runs=5
+php bench/overhead.php --php=/path/to/php-src/sapi/cli/php
+```
+
 ## License
 
 MIT
