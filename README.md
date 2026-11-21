@@ -185,6 +185,13 @@ php bench/overhead.php                                # --n=10000000 --runs=5
 php bench/overhead.php --php=/path/to/php-src/sapi/cli/php
 ```
 
+## AI assistance
+
+The design decisions in this proposal are the author's. The code (this
+polyfill, the native php-src implementation and the benchmarks) was written
+with the help of an AI coding assistant (Claude) and reviewed by the author.
+Tests were verified by deliberately breaking the code they are meant to protect.
+
 ## License
 
 MIT
