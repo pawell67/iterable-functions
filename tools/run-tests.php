@@ -5,6 +5,8 @@ declare(strict_types=1);
 /*
  * Minimal runner for .phpt files (subset of php-src's run-tests.php):
  * supports the --TEST--, --SKIPIF--, --FILE-- and --EXPECT-- sections.
+ * --SKIPIF-- may print only "skip <reason>"; any other output fails the test
+ * (php-src's info/warn/xfail prefixes are not supported).
  *
  * The tests use the php-src format so they can later be moved into php-src
  * with only the `require` line removed.
@@ -39,6 +41,12 @@ foreach ($files as $file) {
         if (stripos($reason, 'skip') === 0) {
             ++$skipped;
             echo 'SKIP ', trim($sections['TEST']), ' [', basename($file), '] ', trim(substr($reason, 4)), "\n";
+            continue;
+        }
+        if ($reason !== '') {
+            // Like php-src's BORK: a broken prerequisite check must not let the test pass.
+            $failed[] = [$file, 'no output from --SKIPIF--', $reason];
+            echo 'FAIL ', trim($sections['TEST']), ' [', basename($file), "] invalid output from --SKIPIF--\n";
             continue;
         }
     }
