@@ -1,0 +1,19 @@
+{
+    "name": "pawell67/iterable-functions",
+    "description": "Userland polyfill for proposed iterator_* functions: lazy counterparts of array_* functions for any iterable (iterator_map, iterator_filter, iterator_slice, ...)",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["iterable", "iterator", "generator", "lazy", "polyfill", "rfc"],
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "files": ["src/functions.php"]
+    },
+    "scripts": {
+        "test": "php tools/run-tests.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
